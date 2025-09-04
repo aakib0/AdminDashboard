@@ -16,6 +16,7 @@ import {
   TrendingUp
 } from "lucide-react"
 import DriverModal from "../components/DriverModal"
+import DriverForm from "../components/DriverForm"
 import { driverApi } from "../utils/api"
 
 interface Driver {
@@ -47,6 +48,7 @@ export default function Dashboard() {
   const [search, setSearch] = useState("")
   const [selectedDriver, setSelectedDriver] = useState<Driver | null>(null)
   const [modalOpen, setModalOpen] = useState(false)
+  const [formModalOpen, setFormModalOpen] = useState(false)
 
   const loadDrivers = async (params = {}) => {
     try {
@@ -96,6 +98,10 @@ export default function Dashboard() {
     }
   }
 
+  const handleDriverCreated = () => {
+    loadDrivers({ search, page: 1 })
+  }
+
   const activeDrivers = drivers.filter(d => d.status === 'active').length
   const inactiveDrivers = drivers.filter(d => d.status === 'inactive').length
 
@@ -127,7 +133,10 @@ export default function Dashboard() {
           <h1 className="text-3xl font-bold tracking-tight">Drivers</h1>
           <p className="text-muted-foreground">Manage your driver accounts and documentation</p>
         </div>
-        <Button className="gap-2 bg-primary hover:bg-primary/90">
+        <Button 
+          className="gap-2 bg-primary hover:bg-primary/90"
+          onClick={() => setFormModalOpen(true)}
+        >
           <UserPlus className="w-4 h-4" />
           Add Driver
         </Button>
@@ -361,7 +370,7 @@ export default function Dashboard() {
         </div>
       )}
 
-      {/* Modal */}
+      {/* Detail Modal */}
       <DriverModal
         isOpen={modalOpen}
         onClose={() => {
@@ -370,6 +379,13 @@ export default function Dashboard() {
         }}
         driver={selectedDriver}
         onDelete={handleDeleteDriver}
+      />
+
+      {/* Form Modal */}
+      <DriverForm
+        isOpen={formModalOpen}
+        onClose={() => setFormModalOpen(false)}
+        onSuccess={handleDriverCreated}
       />
     </div>
   )
