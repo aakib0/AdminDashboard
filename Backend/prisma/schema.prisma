@@ -1,0 +1,33 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = "file:./dev.db"
+}
+
+model Driver {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  name      String
+  phone     String
+  email     String   @unique
+  city      String?
+  license   String?  // URL or path
+  aadhar    String?  // URL or path
+  pan       String?  // URL or path
+  status    String   @default("active")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model User {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  name      String
+  phone     String
+  email     String   @unique
+  city      String?
+  status    String   @default("active")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
