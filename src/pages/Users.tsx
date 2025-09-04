@@ -15,6 +15,7 @@ import {
   MapPin
 } from "lucide-react"
 import UserModal from "../components/UserModal"
+import UserForm from "../components/UserForm"
 import { userApi } from "../utils/api"
 
 interface User {
@@ -43,6 +44,7 @@ export default function Users() {
   const [search, setSearch] = useState("")
   const [selectedUser, setSelectedUser] = useState<User | null>(null)
   const [modalOpen, setModalOpen] = useState(false)
+  const [formModalOpen, setFormModalOpen] = useState(false)
 
   const loadUsers = async (params = {}) => {
     try {
@@ -92,6 +94,10 @@ export default function Users() {
     }
   }
 
+  const handleUserCreated = () => {
+    loadUsers({ search, page: 1 })
+  }
+
   const activeUsers = users.filter(u => u.status === 'active').length
   const inactiveUsers = users.filter(u => u.status === 'inactive').length
   const uniqueCities = new Set(users.filter(u => u.city).map(u => u.city)).size
@@ -124,7 +130,10 @@ export default function Users() {
           <h1 className="text-3xl font-bold tracking-tight">Users</h1>
           <p className="text-muted-foreground">Manage customer accounts and profiles</p>
         </div>
-        <Button className="gap-2 bg-primary hover:bg-primary/90">
+        <Button 
+          className="gap-2 bg-primary hover:bg-primary/90"
+          onClick={() => setFormModalOpen(true)}
+        >
           <UserPlus className="w-4 h-4" />
           Add User
         </Button>
@@ -345,7 +354,7 @@ export default function Users() {
         </div>
       )}
 
-      {/* Modal */}
+      {/* Detail Modal */}
       <UserModal
         isOpen={modalOpen}
         onClose={() => {
@@ -354,6 +363,13 @@ export default function Users() {
         }}
         user={selectedUser}
         onDelete={handleDeleteUser}
+      />
+
+      {/* Form Modal */}
+      <UserForm
+        isOpen={formModalOpen}
+        onClose={() => setFormModalOpen(false)}
+        onSuccess={handleUserCreated}
       />
     </div>
   )
