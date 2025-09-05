@@ -60,10 +60,36 @@ export default function Users() {
     }
   }
 
-  useEffect(() => {
-    loadUsers()
-  }, [])
+ useEffect(() => {
+  setError(null)
+  setLoading(true)
+    fetch("https://loadgo.in/loadgo/getUser")
+      .then((res) => res.json())
+      .then((data) => {
 
+        const usersArray = Array.isArray(data) ? data : data.data;
+        const formatted = usersArray.map((user: any) => ({
+          ID: user.id,
+          Name: user.name,
+          Email: user.email,
+          LoginPin: user.loginPin,
+          PhoneNo: user.phone,
+          CreatedOn: user.createdOn,
+          aadharFront: user.aadharFront,
+          dlFront: user.licenseFront,
+          accountHolderName: user.accountHolderName || "N/A",
+          bankName: user.bankName || "N/A",
+          accountNumber: user.accountNumber || "N/A",
+          IFSCCode: user.IFSCCode || "N/A",
+        }));
+        setUsers(formatted);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error("Error fetching users:", err);        console.error("Error fetching users:", err);
+        setLoading(false);
+      });
+  }, []);
   // Search with debounce
   useEffect(() => {
     const timer = setTimeout(() => {
