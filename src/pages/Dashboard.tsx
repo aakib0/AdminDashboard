@@ -65,8 +65,36 @@ export default function Dashboard() {
   }
 
   useEffect(() => {
-    loadDrivers()
-  }, [])
+    setLoading(true)
+    setError(null)
+    fetch("https://loadgo.in/loadgo/getDriver") 
+      .then((res) => res.json())
+      .then((data) => {
+        const driversArray = Array.isArray(data) ? data : data.data;
+        const formatted = driversArray.map((user: any) => ({
+          ID: user.id,
+          Name: user.driverName,
+          VehicleNo: user.vehicleNo,
+          VehicleType: user.vehicletype,
+          PhoneNo: user.phone,
+          status: user.id % 2 === 0 ? "Active" : "Inactive",
+          joined: "2024-08-21",
+          aadharFront: user.aadharFront,
+          dlFront: user.licenseFront,
+          accountHolderName: user.accountHolderName || "N/A",
+          bankName: user.bankName || "N/A",
+          accountNumber: user.accountNumber || "N/A",
+          IFSCCode: user.IFSCCode || "N/A",
+        }));
+        setDrivers(formatted);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error("Error fetching drivers:", err);    
+        setLoading(false);
+      });
+  }, []);
+
 
   // Search with debounce
   useEffect(() => {
